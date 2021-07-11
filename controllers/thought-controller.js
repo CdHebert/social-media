@@ -63,3 +63,5 @@ const ThoughtController = {
             .catch(err => res.json(err));
     },
 }
+
+module.exports = ThoughtController;
