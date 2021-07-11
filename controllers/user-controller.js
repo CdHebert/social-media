@@ -58,25 +58,19 @@ const UserController = {
     },
 
     // sub document friends
-    addThought({ params, body }, res) {
+    addFriend({ params, body }, res) {
         console.log(params);
         User.create(body)
-          .then(({ _id }) => {
-            return Thought.findOneAndUpdate(
-              { _id: params.thoughtId },
-              { $push: { thoughts: _id } },
-              { new: true }
-            );
-          })
-          .then(dbPizzaData => {
-            console.log(dbPizzaData);
-            if (!dbPizzaData) {
-              res.status(404).json({ message: 'No pizza found with this id!' });
+     
+          .then(data => {
+            console.log(data);
+            if (!data) {
+              res.status(404).json({ message: 'No user found with this id!' });
               return;
             }
-            res.json(dbPizzaData);
+            res.json(data);
           })
-          .catch(err => res.json(err));
+          .catch(err => res.json(err))
       },
 
 };
