@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose');
+const { Schema, Types, model } = require('mongoose');
 
 const UserSchema = new Schema(
     {
@@ -14,16 +14,18 @@ const UserSchema = new Schema(
             unique: true,
             match: [/.+\@.+\..+/, 'Danger Will Robinson NOT A VALID EMAIL!!!!']
         },
-        thoughts: {
-            type: Schema.Types.ObjectId,
-            ref: 'Thought'
-        },
-        friends:[
-         {
-            type: Schema.Types.ObjectId,
-            ref: 'User'
-        }
-    ]
+        thoughts: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Thought'
+            }
+        ],
+        friends: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'User'
+            }
+        ]
     },
     {
         toJSON: {
@@ -33,7 +35,7 @@ const UserSchema = new Schema(
     }
 );
 
-UserSchema.virtual('friendCount').get(function (){
+UserSchema.virtual('friendCount').get(function () {
     return this.friends.length;
 });
 

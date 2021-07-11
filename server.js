@@ -19,6 +19,6 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/thoughts', {
 mongoose.set('debug', true);
 mongoose.set('useCreateIndex', true);
 
-app.use(require('./routes'));
+app.use(require('./routes/api'));
 
 app.listen(PORT, () => console.log(`🌍 Connected on localhost:${PORT}`));
