@@ -1,4 +1,4 @@
-const { Thought } = require('../models');
+const { Thought, User } = require('../models');
 
 const ThoughtController = {
     getAllThoughts(req, res) {
@@ -15,7 +15,7 @@ const ThoughtController = {
     getThoughtById({ params }, res) {
         Thought.findOne({ _id: params.id })
             .populate({
-                path: 'Thought',
+                path: 'thought',
                 select: '-__v'
             })
             .select('-__v')
@@ -62,6 +62,23 @@ const ThoughtController = {
             })
             .catch(err => res.json(err));
     },
+
+    addReaction({ params, body }, res) {
+        Thought.findOneAndUpdate(
+          { _id: params.thoughtId },
+          { $push: { reactions: body } },
+          { new: true, runValidators: true }
+        )
+          .then(data => {
+            if (!data) {
+              res.status(404).json({ message: 'No user found with this id!' });
+              return;
+            }
+            res.json(data);
+          })
+          .catch(err => res.json(err));
+      },
+
 }
 
 module.exports = ThoughtController;
