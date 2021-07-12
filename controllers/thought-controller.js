@@ -18,6 +18,10 @@ const ThoughtController = {
                 path: 'thought',
                 select: '-__v'
             })
+            .populate({
+                path: 'reactions',
+                select: '-__v'
+            })
             .select('-__v')
             .then(data => res.json(data))
             .catch(err => {
@@ -65,19 +69,38 @@ const ThoughtController = {
 
     addReaction({ params, body }, res) {
         Thought.findOneAndUpdate(
-          { _id: params.thoughtId },
-          { $push: { reactions: body } },
-          { new: true, runValidators: true }
+            { _id: params.thoughtId },
+            { $addToSet: { reactions: body } },
+            { runValidators: true, new: true }
         )
-          .then(data => {
-            if (!data) {
-              res.status(404).json({ message: 'No user found with this id!' });
-              return;
-            }
-            res.json(data);
-          })
-          .catch(err => res.json(err));
-      },
+            .then(data => {
+                if (!data) {
+                    return res.status(404).json({ message: 'No reactions with this id!' });
+                }
+                res.json(data);
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json(err);
+            });
+    },
+    removeReaction({ params, body }, res) {
+        Thought.findOneAndUpdate(
+            { _id: params.thoughtId },
+            { $pull: { reactions: body } },
+            { new: true }
+        )
+            .then(data => {
+                if (!data) {
+                    return res.status(404).json({ message: 'No reactions with this id!' });
+                }
+                res.json(data);
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json(err);
+            });
+    },
 
 }
 

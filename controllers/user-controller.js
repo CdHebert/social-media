@@ -65,19 +65,72 @@ const UserController = {
     addFriend({ params }, res) {
         User.findOneAndUpdate(
             { _id: params.userId },
-             {$addToSet: {friends: params.friendId}})
-
+            { $addToSet: { friends: params.friendId } },
+            { new: true }
+        )
             .then(data => {
+                if (!data) {
+                    res.status(404).json({ message: 'No friend with this id!' });
+                    return;
+                }
 
-                res.json(data);
-                console.log(data)
-            })
-            .catch(err => {
-                console.log(err)
-                // res.json(err);
-            });
+                User.findOneAndUpdate(
+                    { _id: params.friendId },
+                    { $addToSet: { friends: params.userId } },
+                    { new: true }
+                )
+
+                    .then(data => {
+                        if (!data) {
+                            res.status(404).json({ message: 'No friend with this id!' });
+                        }
+                        res.json(data);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.status(500).json(err);
+
+                    })
+            }
+            )
+
+
     },
 
-};
+    removeFriend({ params }, res) {
+        User.findOneAndUpdate(
+            { _id: params.userId },
+            { $pull: { friends: params.friendId } },
+            { new: true }
+        )
+            .then(data => {
+                if (!data) {
+                    res.status(404).json({ message: 'No friend with this id!' });
+                    return;
+                }
+
+                User.findOneAndUpdate(
+                    { _id: params.friendId },
+                    { $pull: { friends: params.userId } },
+                    { new: true }
+                )
+
+                    .then(data => {
+                        if (!data) {
+                            res.status(404).json({ message: 'No friend with this id!' });
+                        }
+                        res.json(data);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.status(500).json(err);
+
+                    })
+            }
+            )
+
+
+    },
+}
 
 module.exports = UserController;
