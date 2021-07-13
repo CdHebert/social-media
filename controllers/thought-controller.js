@@ -30,10 +30,13 @@ const ThoughtController = {
             });
     },
 
-    createThought({ body }, res) {
+    createThought({ params, body }, res) {
         Thought.create(body)
             .then(({ _id }) =>
-                User.findOneAndUpdate({}, { $push: { thoughts: _id } }, { new: true })
+                User.findOneAndUpdate(
+                    { _id: body.userId },
+                    { $push: { thoughts: _id } },
+                    { new: true })
             )
             .then(data => {
                 res.json(data);
@@ -84,6 +87,7 @@ const ThoughtController = {
                 res.status(500).json(err);
             });
     },
+    
     removeReaction({ params, body }, res) {
         Thought.findOneAndUpdate(
             { _id: params.thoughtId },

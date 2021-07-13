@@ -49,14 +49,22 @@ const UserController = {
             .catch(err => res.json(err));
     },
 
-    deleteUser({ params }, res) {
-        User.findOneAndDelete({ _id: params.id })
+    deleteUser({ params, body }, res) {
+        User.findOneAndDelete({ _id: params.id },
+             )
+
             .then(data => {
                 if (!data) {
                     res.status(404).json({ message: 'No user found with this id!' });
                     return;
                 }
-                res.json(data);
+                
+               Thought.remove({username: data.username})
+               .then(thoughtData => res.json(thoughtData))
+               .catch(err => {
+                   console.log(err);
+                   res.json(err);
+               })
             })
             .catch(err => res.json(err));
     },
